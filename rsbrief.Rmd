@@ -1,0 +1,125 @@
+---
+title: "Investigating the Uncertainties Propagation Analysis of CO$_2$ Emissions Gridded Maps at the Urban Scale: A Case Study of Jinjiang City, China"
+author: "[Shaoqing Dai](http://gisersqdai.top/mycv/), Yin Ren, Shudi Zuo, Chengyi Lai, Jiajia Li, Shengyu Xie, Bingchu Chen"
+csl: ehp.csl
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+bibliography: CEMU.bib
+---
+**[[Paper]](https://www.mdpi.com/2072-4292/12/23/3932)**
+**[[GitHub]](https://github.com/GISerDaiShaoqing/manuscript_co2_gridded_uncertainty_RS)**
+
+---------------
+
+## Graphic abstract
+
+![](figure/graphicabstractRS2020nov.jpg)
+
+---------------
+
+## Abstract
+
+Gridded CO$_2$ emission maps at the urban scale can aid the design of low-carbon development strategies. However, the large uncertainties associated with such maps increase policy-related risks. Therefore, an investigation of the uncertainties in gridded maps at the urban scale is essential. This study proposed an analytic workflow to assess uncertainty propagation during the gridding process. Gridded CO$_2$ emission maps were produced using two resolutions of geospatial datasets (e.g., remote sensing satellite-derived products) for Jinjiang City, China, and a workflow was applied to analyze uncertainties. The workflow involved four submodules that can be used to evaluate the uncertainties of CO$_2$ emissions in gridded maps, caused by the gridded model and input. Fine-resolution (30 m) maps have a larger spatial variation in CO$_2$ emissions, which gives the fine-resolution maps a higher degree of uncertainty propagation. Furthermore, the uncertainties of gridded CO$_2$ emission maps, caused by inserting a random error into spatial proxies, were found to decrease after the gridding process. This can be explained by the “compensation of error” phenomenon, which may be attributed to the cancellation of the overestimated and underestimated values among the different sectors at the same grid. This indicates a nonlinear change between the sum of the uncertainties for different sectors and the actual uncertainties in the gridded maps. In conclusion, the present workflow determined uncertainties were caused by the gridded model and input. These results may aid decision-makers in establishing emission reduction targets, and in developing both low-carbon cities and community policies.
+
+---------------
+
+## Talk
+
+![](http://gisersqdai.top/mycv/talk/sa2018talks/featured_hu9d43aed1c5d272367973afed90b8593d_182843_720x0_resize_q90_lanczos.jpg)
+
+
+[[Slides]](http://gisersqdai.top/mycv/201807slides.pdf)
+
+---------------
+
+## Analytic workflow
+
+Our goal was to quantify the uncertainties caused by the gridded model, and inputs of the gridded CO$_2$ emission maps at the urban scale. We proposed an analytic workflow based on the Monte Carlo simulation and bootstrap sampling method. 
+
+![](figure/Fig1.png)
+
+---------------
+
+## Datasets and visualization
+
+### Brief
+
+We assessed the uncertainty of CO$_2$ emissions gridded maps during the gridded proceess using our proposed analytic workflow.[@rs12233932] These generated uncertainty maps were available on the [Zenodo](https://doi.org/10.5281/zenodo.3566072)[@shaoqing_dai_2019_3566073].
+
+The download links of these datasets was shown as follow.
+
+#### U1-caused by gridded model
+
+30 m:
+[Total](http://science.gisersqdai.top/RSunco2/U1_30_total.tif) [Resident](http://science.gisersqdai.top/RSunco2/U1_30_res.tif) [Industry](http://science.gisersqdai.top/RSunco2/U1_30_ind.tif) [Transport](http://science.gisersqdai.top/RSunco2/U1_30_trans.tif)
+
+500 m:
+[Total](http://science.gisersqdai.top/RSunco2/U1_500_total.tif) [Resident](http://science.gisersqdai.top/RSunco2/U1_500_res.tif) [Industry](http://science.gisersqdai.top/RSunco2/U1_500_ind.tif) [Transport](http://science.gisersqdai.top/RSunco2/U1_500_trans.tif)
+
+#### U3-caused by activity levels
+
+[30m](http://science.gisersqdai.top/RSunco2/U3_30.tif) [500m](http://science.gisersqdai.top/RSunco2/U3_500.tif)
+
+#### U4- caused by spatial proxies
+
+[30m](http://science.gisersqdai.top/RSunco2/U4_30.tif) [500m](http://science.gisersqdai.top/RSunco2/U4_500.tif)
+
+### Visualization
+
+- Uncertainty maps
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(leaflet)
+library(raster)
+library(RColorBrewer)
+
+co30 <- raster('F:/GISproject/IUE/CarbonEmission/DIBdata/webpage/dataset/CO30.tif')
+u130 <- raster('F:/GISproject/IUE/CarbonEmission/DIBdata/webpage/dataset/U1_30_total.tif')
+u330 <- raster('F:/GISproject/IUE/CarbonEmission/DIBdata/webpage/dataset/U3_30.tif')
+u430 <- raster('F:/GISproject/IUE/CarbonEmission/DIBdata/webpage/dataset/U4_30.tif')
+
+pal <- colorNumeric(c("YlOrRd"), na.omit(values(co30)))
+pal2 <- colorNumeric(c("viridis"), na.omit(values(u130)))
+pal3 <- colorNumeric(c("viridis"), na.omit(values(u330)))
+pal4 <- colorNumeric(c("RdBu"), na.omit(values(u430)))
+
+leaflet() %>%
+  addProviderTiles(providers$CartoDB.DarkMatter, group="Dark") %>%
+  addRasterImage(co30, colors = pal, group = 'Carbion dioxide emissions (t)') %>%
+  addRasterImage(u130, colors = pal2, group = 'U1 (%)') %>%
+  addRasterImage(u330, colors = pal3, group = 'U3 (%)') %>%
+  addRasterImage(u430, colors = pal4, group = 'U4 (t)') %>%
+  addLegend("bottomright", pal = pal, values = values(co30),
+            title = "Total emissions (t)", group = "Carbion dioxide emissions (t)") %>%
+  addLegend("bottomleft", pal = pal2, values = values(u130),
+            title = "U1 (%)", group = "U1 (%)")%>%
+    addLegend("bottomleft", pal = pal3, values = values(u330),
+            title = "U3 (%)", group = "U3 (%)") %>%
+  addLegend("bottomleft", pal = pal4, values = values(u430),
+            title = "U4 (t)", group = "U4 (t)")%>%
+  addLayersControl(baseGroups = c("Basemap"),
+                   overlayGroups = c('Carbion dioxide emissions (t)', 'U1 (%)', 'U3 (%)', 'U4 (t)'),
+                   options = layersControlOptions(collapsed = TRUE)
+                   ) 
+
+```
+
+- 
+
+---------------
+
+## Paper and Supplementary material
+
+
+![](figure/RScover.png){width=160px height=250px}![](figure/SA2018cover.png){width=160px height=250px}![](figure/JCLPcover.png){width=160px height=250px}![](figure/DIBcover.png){width=160px height=250px}
+
+[[Bibtex]](bibtex.txt)
+
+---------------
+
+## Reference
