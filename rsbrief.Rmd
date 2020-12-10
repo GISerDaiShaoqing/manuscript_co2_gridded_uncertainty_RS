@@ -30,6 +30,8 @@ Gridded CO$_2$ emission maps at the urban scale can aid the design of low-carbon
 
 ## Talk
 
+The 13th International Symposium on Spatial Accuracy Assessment in Natural Resources and Environmental Sciences(Spatial Accuracy 2018).
+
 ![](http://gisersqdai.top/mycv/talk/sa2018talks/featured_hu9d43aed1c5d272367973afed90b8593d_182843_720x0_resize_q90_lanczos.jpg)
 
 
@@ -83,18 +85,18 @@ u130 <- raster('F:/GISproject/IUE/CarbonEmission/DIBdata/webpage/dataset/U1_30_t
 u330 <- raster('F:/GISproject/IUE/CarbonEmission/DIBdata/webpage/dataset/U3_30.tif')
 u430 <- raster('F:/GISproject/IUE/CarbonEmission/DIBdata/webpage/dataset/U4_30.tif')
 
-pal <- colorNumeric(c("YlOrRd"), na.omit(values(co30)))
+pal1 <- colorNumeric(c("YlOrRd"), na.omit(values(co30)))
 pal2 <- colorNumeric(c("viridis"), na.omit(values(u130)))
 pal3 <- colorNumeric(c("viridis"), na.omit(values(u330)))
 pal4 <- colorNumeric(c("RdBu"), na.omit(values(u430)))
 
 leaflet() %>%
   addProviderTiles(providers$CartoDB.DarkMatter, group="Dark") %>%
-  addRasterImage(co30, colors = pal, group = 'Carbion dioxide emissions (t)') %>%
+  addRasterImage(co30, colors = pal1, group = 'Carbion dioxide emissions (t)') %>%
   addRasterImage(u130, colors = pal2, group = 'U1 (%)') %>%
   addRasterImage(u330, colors = pal3, group = 'U3 (%)') %>%
   addRasterImage(u430, colors = pal4, group = 'U4 (t)') %>%
-  addLegend("bottomright", pal = pal, values = values(co30),
+  addLegend("bottomright", pal = pal1, values = values(co30),
             title = "Total emissions (t)", group = "Carbion dioxide emissions (t)") %>%
   addLegend("bottomleft", pal = pal2, values = values(u130),
             title = "U1 (%)", group = "U1 (%)")%>%
@@ -109,7 +111,62 @@ leaflet() %>%
 
 ```
 
-- 
+- Uncertainty plot and table
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(plotly)
+library(ggplot2)
+
+rmc30all <- read.csv('data/rmc30.csv')
+polyx <- read.csv('data/polyx.csv')
+polyy <- read.csv('data/polyy.csv')
+
+fign <- ggplot(rmc30all) + 
+  geom_polygon(mapping = aes(x = polyx$x, y = polyy$x), fill="#EEEEEE", alpha = 0.7) + 
+  geom_point(mapping = aes(x = gridvalue, y = CDF, colour = type)) + 
+  geom_line(mapping = aes (x = gridvalue, y = CDF, colour = type)) +
+  scale_color_manual(values = c("blue", "red")) +  
+  scale_x_continuous(breaks = c(0, 500, 1000,1500,2000),
+                     labels = c("0","500","1,000","1,500","2,000")) + 
+  labs(x = 'Grid value (t)', y ='Cumulative Probability', title = '', colour = "") + 
+  theme(panel.background = element_blank(),
+        panel.border = element_rect(colour = 'black', fill = NA, size = 1.2),
+        legend.key.size = unit(2, "cm"),
+        legend.position='top',
+        legend.title=element_text(family="RT",size=12,colour="black"),
+        legend.text=element_text(family="RT",size=12,colour="black"),
+        title=element_text(size=12,family="RT"),axis.text.y=element_text(size=12,family="RT"),
+        axis.text.x=element_text(size=12,family="RT"),axis.title=element_text(size=12,family="RT"),
+        strip.text=element_text(size=12,family="RT"))
+
+fig <- ggplotly(fign)
+fig
+```
+
+Table Uncertainty in $CO_2$ emissions (x $10^3$ t) from different sectors from the 30 m and 500 m resolution maps
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(colorTable)
+tdf <- data.frame(sector = c('Resident', 'Industry', 'Transport', 'Total'),
+                  Confidence_Interval_95_30 = c('2304 to 2970\n(-11% to +14%)',
+                               '9744 to 18170\n(-29% to +32%)',
+                               '240 to 357\n(-19% to +20%)',
+                               '12289 to 21498\n(-26% to +29%)'),
+                  Confidence_Interval_95_500 = c('2401 to 2799\n(-8% to +8%)',
+                                '11917 to 15591\n(-13% to +14%)',
+                                '274 to 323\n(-8% to +8%)',
+                                '14593 to 18714\n(-12% to +13%)'),
+                  Uncertainty_30 = c('12.84%',
+                                     '30.62%',
+                                     '19.67%',
+                                     '27.65%'),
+                  Uncertainty_500 = c('7.68%',
+                                     '13.38%',
+                                     '8.19%',
+                                     '12.40%'))
+color_table(tdf, col_bgs = c('#eaffd0', '#fce38a', '#fce38a', '#f38181', '#f38181'))
+```
+
 
 ---------------
 
@@ -118,7 +175,7 @@ leaflet() %>%
 
 ![](figure/RScover.png){width=160px height=250px}![](figure/SA2018cover.png){width=160px height=250px}![](figure/JCLPcover.png){width=160px height=250px}![](figure/DIBcover.png){width=160px height=250px}
 
-[[Bibtex]](bibtex.txt)
+[[Bibtex]](https://github.com/GISerDaiShaoqing/manuscript_co2_gridded_uncertainty_RS/raw/master/bibtex.txt)
 
 ---------------
 
