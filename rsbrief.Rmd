@@ -16,7 +16,7 @@ bibliography: CEMU.bib
 
 ---------------
 
-## Graphic abstract
+## Graphical abstract
 
 ![](figure/graphicabstractRS2020nov.jpg)
 
@@ -100,11 +100,11 @@ leaflet() %>%
             title = "Total emissions (t)", group = "Carbion dioxide emissions (t)") %>%
   addLegend("bottomleft", pal = pal2, values = values(u130),
             title = "U1 (%)", group = "U1 (%)")%>%
-    addLegend("bottomleft", pal = pal3, values = values(u330),
+  addLegend("bottomleft", pal = pal3, values = values(u330),
             title = "U3 (%)", group = "U3 (%)") %>%
   addLegend("bottomleft", pal = pal4, values = values(u430),
             title = "U4 (t)", group = "U4 (t)")%>%
-  addLayersControl(baseGroups = c("Basemap"),
+  addLayersControl(baseGroups = c("Dark"),
                    overlayGroups = c('Carbion dioxide emissions (t)', 'U1 (%)', 'U3 (%)', 'U4 (t)'),
                    options = layersControlOptions(collapsed = TRUE)
                    ) 
